@@ -1,5 +1,5 @@
 -- LocalScript
--- Put this in StarterPlayerScripts or inside StarterGui as a LocalScript
+-- Put in StarterPlayerScripts or StarterGui
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -24,46 +24,58 @@ main.BorderSizePixel = 0
 main.Parent = gui
 
 local mainCorner = Instance.new("UICorner")
-mainCorner.CornerRadius = UDim.new(0, 14)
+mainCorner.CornerRadius = UDim.new(0, 16)
 mainCorner.Parent = main
 
 local mainStroke = Instance.new("UIStroke")
-mainStroke.Color = Color3.fromRGB(110, 110, 170)
-mainStroke.Transparency = 0.5
+mainStroke.Color = Color3.fromRGB(120, 120, 180)
+mainStroke.Transparency = 0.45
 mainStroke.Thickness = 1
 mainStroke.Parent = main
+
+local mainGradient = Instance.new("UIGradient")
+mainGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(16, 16, 22)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(26, 26, 38)),
+})
+mainGradient.Rotation = 90
+mainGradient.Parent = main
 
 local topbar = Instance.new("Frame")
 topbar.Name = "Topbar"
 topbar.Size = UDim2.new(1, 0, 0, 44)
-topbar.BackgroundColor3 = Color3.fromRGB(25, 25, 34)
+topbar.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
 topbar.BorderSizePixel = 0
 topbar.Parent = main
 
 local topCorner = Instance.new("UICorner")
-topCorner.CornerRadius = UDim.new(0, 14)
+topCorner.CornerRadius = UDim.new(0, 16)
 topCorner.Parent = topbar
 
 local topMask = Instance.new("Frame")
-topMask.Size = UDim2.new(1, 0, 0, 14)
-topMask.Position = UDim2.new(0, 0, 1, -14)
+topMask.Size = UDim2.new(1, 0, 0, 16)
+topMask.Position = UDim2.new(0, 0, 1, -16)
 topMask.BackgroundColor3 = topbar.BackgroundColor3
 topMask.BorderSizePixel = 0
 topMask.Parent = topbar
 
+local topStroke = Instance.new("UIStroke")
+topStroke.Color = Color3.fromRGB(90, 90, 130)
+topStroke.Transparency = 0.7
+topStroke.Parent = topbar
+
 local title = Instance.new("TextLabel")
 title.BackgroundTransparency = 1
 title.Position = UDim2.fromOffset(14, 0)
-title.Size = UDim2.new(1, -160, 1, 0)
+title.Size = UDim2.new(1, -170, 1, 0)
 title.Font = Enum.Font.GothamSemibold
 title.Text = "Dummy GUI"
 title.TextSize = 16
-title.TextColor3 = Color3.fromRGB(240, 240, 255)
+title.TextColor3 = Color3.fromRGB(245, 245, 255)
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = topbar
 
 local minimize = Instance.new("TextButton")
-minimize.Name = "Minimize"
 minimize.Size = UDim2.fromOffset(34, 26)
 minimize.Position = UDim2.new(1, -78, 0.5, -13)
 minimize.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
@@ -76,10 +88,9 @@ minimize.Parent = topbar
 Instance.new("UICorner", minimize).CornerRadius = UDim.new(0, 8)
 
 local close = Instance.new("TextButton")
-close.Name = "Close"
 close.Size = UDim2.fromOffset(34, 26)
 close.Position = UDim2.new(1, -40, 0.5, -13)
-close.BackgroundColor3 = Color3.fromRGB(130, 50, 60)
+close.BackgroundColor3 = Color3.fromRGB(135, 55, 65)
 close.BorderSizePixel = 0
 close.Text = "X"
 close.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -232,11 +243,10 @@ local function makeSlider(parent, label, x, y)
 	Instance.new("UICorner", fill).CornerRadius = UDim.new(1, 0)
 
 	local dragging = false
-	local value = 50
 
 	local function setFromX(xPos)
 		local rel = math.clamp((xPos - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1)
-		value = math.floor(rel * 100 + 0.5)
+		local value = math.floor(rel * 100 + 0.5)
 		fill.Size = UDim2.new(rel, 0, 1, 0)
 		txt.Text = label .. ": " .. value
 	end
@@ -265,7 +275,6 @@ local function setActiveTab(name)
 	for n, page in pairs(pages) do
 		page.Visible = (n == name)
 	end
-
 	for _, tab in ipairs(tabButtons) do
 		tab.BackgroundColor3 = (tab.Text == name) and Color3.fromRGB(72, 72, 102) or Color3.fromRGB(32, 32, 44)
 	end
@@ -319,18 +328,48 @@ setActiveTab("Home")
 
 local minimized = false
 local expandedSize = UDim2.fromOffset(560, 360)
-local minimizedSize = UDim2.fromOffset(560, 44)
+local minimizedSize = UDim2.fromOffset(220, 44)
 
-minimize.MouseButton1Click:Connect(function()
-	minimized = not minimized
+local reopen = Instance.new("TextButton")
+reopen.Name = "Reopen"
+reopen.Size = UDim2.fromOffset(220, 44)
+reopen.Position = UDim2.fromScale(0.5, 0.5)
+reopen.AnchorPoint = Vector2.new(0.5, 0.5)
+reopen.BackgroundColor3 = Color3.fromRGB(28, 28, 40)
+reopen.BorderSizePixel = 0
+reopen.Text = "Open GUI"
+reopen.TextColor3 = Color3.fromRGB(245, 245, 255)
+reopen.Font = Enum.Font.GothamSemibold
+reopen.TextSize = 15
+reopen.Visible = false
+reopen.Parent = gui
+Instance.new("UICorner", reopen).CornerRadius = UDim.new(0, 14)
+
+local reopenStroke = Instance.new("UIStroke")
+reopenStroke.Color = Color3.fromRGB(120, 120, 180)
+reopenStroke.Transparency = 0.45
+reopenStroke.Parent = reopen
+
+local function setMinimized(state)
+	minimized = state
 	for _, child in ipairs(main:GetChildren()) do
 		if child ~= topbar then
 			child.Visible = not minimized
 		end
 	end
-	TweenService:Create(main, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+	reopen.Visible = minimized
+
+	TweenService:Create(main, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 		Size = minimized and minimizedSize or expandedSize
 	}):Play()
+end
+
+minimize.MouseButton1Click:Connect(function()
+	setMinimized(not minimized)
+end)
+
+reopen.MouseButton1Click:Connect(function()
+	setMinimized(false)
 end)
 
 close.MouseButton1Click:Connect(function()
