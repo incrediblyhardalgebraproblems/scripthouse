@@ -1,4 +1,6 @@
--- LocalScript inside StarterPlayerScripts or StarterGui
+-- LocalScript
+-- Put this in StarterPlayerScripts or inside StarterGui as a LocalScript
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UIS = game:GetService("UserInputService")
@@ -9,29 +11,31 @@ local playerGui = player:WaitForChild("PlayerGui")
 local gui = Instance.new("ScreenGui")
 gui.Name = "CoolDummyGui"
 gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
 gui.Parent = playerGui
 
 local main = Instance.new("Frame")
 main.Name = "Main"
-main.Size = UDim2.fromOffset(520, 340)
+main.Size = UDim2.fromOffset(560, 360)
 main.Position = UDim2.fromScale(0.5, 0.5)
 main.AnchorPoint = Vector2.new(0.5, 0.5)
 main.BackgroundColor3 = Color3.fromRGB(18, 18, 24)
 main.BorderSizePixel = 0
 main.Parent = gui
 
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 14)
-corner.Parent = main
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 14)
+mainCorner.Parent = main
 
-local stroke = Instance.new("UIStroke")
-stroke.Color = Color3.fromRGB(80, 80, 120)
-stroke.Thickness = 1
-stroke.Transparency = 0.35
-stroke.Parent = main
+local mainStroke = Instance.new("UIStroke")
+mainStroke.Color = Color3.fromRGB(110, 110, 170)
+mainStroke.Transparency = 0.5
+mainStroke.Thickness = 1
+mainStroke.Parent = main
 
 local topbar = Instance.new("Frame")
-topbar.Size = UDim2.new(1, 0, 0, 42)
+topbar.Name = "Topbar"
+topbar.Size = UDim2.new(1, 0, 0, 44)
 topbar.BackgroundColor3 = Color3.fromRGB(25, 25, 34)
 topbar.BorderSizePixel = 0
 topbar.Parent = main
@@ -40,52 +44,54 @@ local topCorner = Instance.new("UICorner")
 topCorner.CornerRadius = UDim.new(0, 14)
 topCorner.Parent = topbar
 
-local topFix = Instance.new("Frame")
-topFix.Size = UDim2.new(1, 0, 0, 14)
-topFix.Position = UDim2.new(0, 0, 1, -14)
-topFix.BackgroundColor3 = topbar.BackgroundColor3
-topFix.BorderSizePixel = 0
-topFix.Parent = topbar
+local topMask = Instance.new("Frame")
+topMask.Size = UDim2.new(1, 0, 0, 14)
+topMask.Position = UDim2.new(0, 0, 1, -14)
+topMask.BackgroundColor3 = topbar.BackgroundColor3
+topMask.BorderSizePixel = 0
+topMask.Parent = topbar
 
 local title = Instance.new("TextLabel")
 title.BackgroundTransparency = 1
 title.Position = UDim2.fromOffset(14, 0)
-title.Size = UDim2.new(1, -140, 1, 0)
+title.Size = UDim2.new(1, -160, 1, 0)
 title.Font = Enum.Font.GothamSemibold
 title.Text = "Dummy GUI"
-title.TextColor3 = Color3.fromRGB(235, 235, 255)
 title.TextSize = 16
+title.TextColor3 = Color3.fromRGB(240, 240, 255)
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = topbar
 
 local minimize = Instance.new("TextButton")
+minimize.Name = "Minimize"
 minimize.Size = UDim2.fromOffset(34, 26)
 minimize.Position = UDim2.new(1, -78, 0.5, -13)
 minimize.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
+minimize.BorderSizePixel = 0
 minimize.Text = "—"
 minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
 minimize.Font = Enum.Font.GothamBold
 minimize.TextSize = 18
-minimize.BorderSizePixel = 0
 minimize.Parent = topbar
 Instance.new("UICorner", minimize).CornerRadius = UDim.new(0, 8)
 
 local close = Instance.new("TextButton")
+close.Name = "Close"
 close.Size = UDim2.fromOffset(34, 26)
 close.Position = UDim2.new(1, -40, 0.5, -13)
-close.BackgroundColor3 = Color3.fromRGB(120, 45, 55)
+close.BackgroundColor3 = Color3.fromRGB(130, 50, 60)
+close.BorderSizePixel = 0
 close.Text = "X"
 close.TextColor3 = Color3.fromRGB(255, 255, 255)
 close.Font = Enum.Font.GothamBold
 close.TextSize = 16
-close.BorderSizePixel = 0
 close.Parent = topbar
 Instance.new("UICorner", close).CornerRadius = UDim.new(0, 8)
 
 local tabBar = Instance.new("Frame")
 tabBar.BackgroundTransparency = 1
-tabBar.Position = UDim2.fromOffset(12, 54)
-tabBar.Size = UDim2.new(1, -24, 0, 32)
+tabBar.Position = UDim2.fromOffset(12, 56)
+tabBar.Size = UDim2.new(1, -24, 0, 34)
 tabBar.Parent = main
 
 local tabLayout = Instance.new("UIListLayout")
@@ -95,11 +101,12 @@ tabLayout.Parent = tabBar
 
 local content = Instance.new("Frame")
 content.BackgroundTransparency = 1
-content.Position = UDim2.fromOffset(12, 92)
-content.Size = UDim2.new(1, -24, 1, -104)
+content.Position = UDim2.fromOffset(12, 98)
+content.Size = UDim2.new(1, -24, 1, -110)
 content.Parent = main
 
 local pages = {}
+local tabButtons = {}
 
 local function makePage(name)
 	local page = Instance.new("Frame")
@@ -114,31 +121,33 @@ end
 
 local function makeTab(text)
 	local tab = Instance.new("TextButton")
-	tab.Size = UDim2.fromOffset(92, 32)
+	tab.Size = UDim2.fromOffset(94, 34)
 	tab.BackgroundColor3 = Color3.fromRGB(32, 32, 44)
+	tab.BorderSizePixel = 0
 	tab.Text = text
-	tab.TextColor3 = Color3.fromRGB(235, 235, 255)
+	tab.TextColor3 = Color3.fromRGB(240, 240, 255)
 	tab.Font = Enum.Font.GothamSemibold
 	tab.TextSize = 13
-	tab.BorderSizePixel = 0
 	tab.Parent = tabBar
 	Instance.new("UICorner", tab).CornerRadius = UDim.new(0, 10)
+	table.insert(tabButtons, tab)
 	return tab
 end
 
 local function makeCard(parent, y)
 	local card = Instance.new("Frame")
-	card.Size = UDim2.new(1, 0, 0, 92)
+	card.Size = UDim2.new(1, 0, 0, 96)
 	card.Position = UDim2.fromOffset(0, y)
 	card.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
 	card.BorderSizePixel = 0
 	card.Parent = parent
 	Instance.new("UICorner", card).CornerRadius = UDim.new(0, 12)
 
-	local s = Instance.new("UIStroke")
-	s.Color = Color3.fromRGB(90, 90, 130)
-	s.Transparency = 0.6
-	s.Parent = card
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(100, 100, 140)
+	stroke.Transparency = 0.65
+	stroke.Parent = card
+
 	return card
 end
 
@@ -146,27 +155,35 @@ local function makeButton(parent, text, x, y)
 	local b = Instance.new("TextButton")
 	b.Size = UDim2.fromOffset(120, 32)
 	b.Position = UDim2.fromOffset(x, y)
-	b.BackgroundColor3 = Color3.fromRGB(52, 52, 72)
+	b.BackgroundColor3 = Color3.fromRGB(54, 54, 76)
+	b.BorderSizePixel = 0
 	b.Text = text
 	b.TextColor3 = Color3.fromRGB(255, 255, 255)
 	b.Font = Enum.Font.GothamSemibold
 	b.TextSize = 13
-	b.BorderSizePixel = 0
 	b.Parent = parent
 	Instance.new("UICorner", b).CornerRadius = UDim.new(0, 10)
+
+	b.MouseEnter:Connect(function()
+		TweenService:Create(b, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(66, 66, 92)}):Play()
+	end)
+	b.MouseLeave:Connect(function()
+		TweenService:Create(b, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(54, 54, 76)}):Play()
+	end)
+
 	return b
 end
 
 local function makeToggle(parent, text, x, y)
 	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.fromOffset(150, 30)
+	btn.Size = UDim2.fromOffset(150, 32)
 	btn.Position = UDim2.fromOffset(x, y)
 	btn.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
+	btn.BorderSizePixel = 0
 	btn.Text = text .. ": OFF"
 	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 	btn.Font = Enum.Font.GothamSemibold
 	btn.TextSize = 13
-	btn.BorderSizePixel = 0
 	btn.Parent = parent
 	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
 
@@ -184,7 +201,7 @@ end
 
 local function makeSlider(parent, label, x, y)
 	local frame = Instance.new("Frame")
-	frame.Size = UDim2.fromOffset(240, 36)
+	frame.Size = UDim2.fromOffset(260, 38)
 	frame.Position = UDim2.fromOffset(x, y)
 	frame.BackgroundTransparency = 1
 	frame.Parent = parent
@@ -200,7 +217,7 @@ local function makeSlider(parent, label, x, y)
 	txt.Parent = frame
 
 	local bar = Instance.new("Frame")
-	bar.Position = UDim2.fromOffset(0, 18)
+	bar.Position = UDim2.fromOffset(0, 20)
 	bar.Size = UDim2.new(1, 0, 0, 10)
 	bar.BackgroundColor3 = Color3.fromRGB(38, 38, 52)
 	bar.BorderSizePixel = 0
@@ -244,14 +261,13 @@ local function makeSlider(parent, label, x, y)
 	end)
 end
 
-local function activate(name)
-	for n, p in pairs(pages) do
-		p.Visible = (n == name)
+local function setActiveTab(name)
+	for n, page in pairs(pages) do
+		page.Visible = (n == name)
 	end
-	for _, child in ipairs(tabBar:GetChildren()) do
-		if child:IsA("TextButton") then
-			child.BackgroundColor3 = (child.Text == name) and Color3.fromRGB(70, 70, 100) or Color3.fromRGB(32, 32, 44)
-		end
+
+	for _, tab in ipairs(tabButtons) do
+		tab.BackgroundColor3 = (tab.Text == name) and Color3.fromRGB(72, 72, 102) or Color3.fromRGB(32, 32, 44)
 	end
 end
 
@@ -263,53 +279,58 @@ local tab1 = makeTab("Home")
 local tab2 = makeTab("Settings")
 local tab3 = makeTab("Info")
 
-tab1.MouseButton1Click:Connect(function() activate("Home") end)
-tab2.MouseButton1Click:Connect(function() activate("Settings") end)
-tab3.MouseButton1Click:Connect(function() activate("Info") end)
+tab1.MouseButton1Click:Connect(function() setActiveTab("Home") end)
+tab2.MouseButton1Click:Connect(function() setActiveTab("Settings") end)
+tab3.MouseButton1Click:Connect(function() setActiveTab("Info") end)
 
-local c1 = makeCard(home, 0)
-local c2 = makeCard(home, 104)
+local homeCard1 = makeCard(home, 0)
+local homeCard2 = makeCard(home, 106)
 
-makeButton(c1, "Button A", 14, 28)
-makeButton(c1, "Button B", 144, 28)
-makeToggle(c1, "Switch", 274, 28)
+makeButton(homeCard1, "Button A", 14, 30)
+makeButton(homeCard1, "Button B", 144, 30)
+makeToggle(homeCard1, "Switch", 274, 30)
 
-makeSlider(c2, "Speed", 14, 16)
-makeSlider(c2, "Opacity", 14, 52)
+makeSlider(homeCard2, "Speed", 14, 16)
+makeSlider(homeCard2, "Opacity", 14, 54)
 
-local s1 = makeCard(settings, 0)
-local s2 = makeCard(settings, 104)
+local settingsCard1 = makeCard(settings, 0)
+local settingsCard2 = makeCard(settings, 106)
 
-makeToggle(s1, "Theme", 14, 28)
-makeToggle(s1, "Glow", 174, 28)
-makeButton(s2, "Apply", 14, 28)
-makeButton(s2, "Reset", 144, 28)
+makeToggle(settingsCard1, "Glow", 14, 30)
+makeToggle(settingsCard1, "Accent", 174, 30)
+makeButton(settingsCard2, "Apply", 14, 30)
+makeButton(settingsCard2, "Reset", 144, 30)
 
-local i1 = makeCard(info, 0)
-local label = Instance.new("TextLabel")
-label.BackgroundTransparency = 1
-label.Size = UDim2.new(1, -28, 1, -20)
-label.Position = UDim2.fromOffset(14, 10)
-label.Font = Enum.Font.Gotham
-label.Text = "This is a dummy UI for your own Roblox game.\nIt does not do anything except look nice."
-label.TextColor3 = Color3.fromRGB(230, 230, 240)
-label.TextSize = 14
-label.TextWrapped = true
-label.TextXAlignment = Enum.TextXAlignment.Left
-label.TextYAlignment = Enum.TextYAlignment.Top
-label.Parent = i1
+local infoCard = makeCard(info, 0)
+local infoText = Instance.new("TextLabel")
+infoText.BackgroundTransparency = 1
+infoText.Size = UDim2.new(1, -28, 1, -20)
+infoText.Position = UDim2.fromOffset(14, 10)
+infoText.Font = Enum.Font.Gotham
+infoText.Text = "This is a dummy UI for your own Roblox game.\nIt only changes visuals and does not do anything gameplay-related."
+infoText.TextColor3 = Color3.fromRGB(235, 235, 245)
+infoText.TextSize = 14
+infoText.TextWrapped = true
+infoText.TextXAlignment = Enum.TextXAlignment.Left
+infoText.TextYAlignment = Enum.TextYAlignment.Top
+infoText.Parent = infoCard
 
-activate("Home")
+setActiveTab("Home")
 
 local minimized = false
+local expandedSize = UDim2.fromOffset(560, 360)
+local minimizedSize = UDim2.fromOffset(560, 44)
+
 minimize.MouseButton1Click:Connect(function()
 	minimized = not minimized
-	for _, obj in ipairs(main:GetChildren()) do
-		if obj ~= topbar then
-			obj.Visible = not minimized
+	for _, child in ipairs(main:GetChildren()) do
+		if child ~= topbar then
+			child.Visible = not minimized
 		end
 	end
-	main.Size = minimized and UDim2.fromOffset(520, 42) or UDim2.fromOffset(520, 340)
+	TweenService:Create(main, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+		Size = minimized and minimizedSize or expandedSize
+	}):Play()
 end)
 
 close.MouseButton1Click:Connect(function()
@@ -317,7 +338,10 @@ close.MouseButton1Click:Connect(function()
 end)
 
 do
-	local dragging, dragStart, startPos
+	local dragging = false
+	local dragStart
+	local startPos
+
 	topbar.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			dragging = true
@@ -336,7 +360,7 @@ do
 		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
 			local delta = input.Position - dragStart
 			local goal = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-			TweenService:Create(main, TweenInfo.new(0.08), {Position = goal}):Play()
+			TweenService:Create(main, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = goal}):Play()
 		end
 	end)
 end
